@@ -1,6 +1,6 @@
 package com.thiago.demoproject.controller;
 
-import com.thiago.demoproject.model.Person;
+import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ public class PersonController {
     private PersonService service;
 
     @GetMapping
-    ResponseEntity<Page<Person>> listAll(
+    ResponseEntity<Page<PersonDTO>> listAll(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize){
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
@@ -28,7 +28,7 @@ public class PersonController {
     }
 
     @GetMapping(value = "/findByEmail")
-    ResponseEntity<Page<Person>> findByEmail(
+    ResponseEntity<Page<PersonDTO>> findByEmail(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "email") String email){
@@ -38,12 +38,9 @@ public class PersonController {
     }
 
     @PostMapping
-    ResponseEntity<Person> create(@RequestBody Person person){
+    ResponseEntity<PersonDTO> create(@RequestBody PersonDTO person){
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(person.getId()).toUri();
         return ResponseEntity.created(location).body(service.save(person));
     }
-
-    //TODO impl dto with generic modelMapper or Record and BeanUtils
-
 }

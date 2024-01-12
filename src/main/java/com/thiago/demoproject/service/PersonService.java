@@ -1,5 +1,7 @@
 package com.thiago.demoproject.service;
 
+import com.thiago.demoproject.dto.PersonDTO;
+import com.thiago.demoproject.mapper.GenericModelMapper;
 import com.thiago.demoproject.model.Person;
 import com.thiago.demoproject.repository.PersonRepository;
 import jakarta.transaction.Transactional;
@@ -18,23 +20,28 @@ public class PersonService {
     @Autowired
     private PersonRepository repository;
 
-    public Page<Person> findAll(Pageable pageable){
+    public Page<PersonDTO> findAll(Pageable pageable){
 
         logger.info("Finding all people");
-        return repository.findAll(pageable);
+        Page<Person> peoplePage = repository.findAll(pageable);
+        return peoplePage.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
     }
 
-    public Page<Person> findPeopleByEmail(String email, Pageable pageable) {
+    public Page<PersonDTO> findPeopleByEmail(String email, Pageable pageable) {
+
         logger.info("Finding people by email");
-        return repository.findPeopleByEmail(email, pageable);
+
+        Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
+        return peopleByEmail.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
     }
 
     @Transactional
-    public Person save(Person person) {
+    public PersonDTO save(PersonDTO person) {
 
         //TODO impl ContollerAdvice and exeption for already registred email
 
         logger.info("Saving a person");
-        return repository.save(person);
+        Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
+        return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
     }
 }
