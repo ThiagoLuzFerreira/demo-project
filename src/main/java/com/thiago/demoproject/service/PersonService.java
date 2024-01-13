@@ -1,6 +1,7 @@
 package com.thiago.demoproject.service;
 
 import com.thiago.demoproject.dto.PersonDTO;
+import com.thiago.demoproject.exception.DataIntegrityViolationException;
 import com.thiago.demoproject.mapper.GenericModelMapper;
 import com.thiago.demoproject.model.Person;
 import com.thiago.demoproject.repository.PersonRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
@@ -30,7 +32,6 @@ public class PersonService {
     public Page<PersonDTO> findPeopleByEmail(String email, Pageable pageable) {
 
         logger.info("Finding people by email");
-
         Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
         return peopleByEmail.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
     }
@@ -38,9 +39,11 @@ public class PersonService {
     @Transactional
     public PersonDTO save(PersonDTO person) {
 
-        //TODO impl ContollerAdvice and exeption for already registred email
-
         logger.info("Saving a person");
+        Optional<Person> foundPerson = repository.findByEmail(person.getEmail());
+        if(foundPerson.isPresent() && foundPerson.get().getEmail().equals(person.getEmail())){
+            throw new DataIntegrityViolationException("Already registred email");
+        }
         Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
         return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
     }
