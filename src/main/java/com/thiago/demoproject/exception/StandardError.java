@@ -1,10 +1,10 @@
 package com.thiago.demoproject.exception;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class StandardError {
 
-    private Date timestamp;
+    private LocalDateTime timestamp;
     private Integer status;
     private String error;
     private String path;
@@ -12,18 +12,18 @@ public class StandardError {
     public StandardError() {
     }
 
-    public StandardError(Date timestamp, Integer status, String error, String path) {
+    public StandardError(LocalDateTime timestamp, Integer status, String error, String path) {
         this.timestamp = timestamp;
         this.status = status;
         this.error = error;
         this.path = path;
     }
 
-    public Date getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

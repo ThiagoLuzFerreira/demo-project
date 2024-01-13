@@ -2,12 +2,15 @@ package com.thiago.demoproject.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 public class Person {
+
+    public static final String AMERICA_SAO_PAULO = "America/Sao_Paulo";
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -17,8 +20,9 @@ public class Person {
     @Column(unique = true)
     private String email;
     private String gender;
+    @Column(nullable = false)
     private String cep;
-    private LocalDate creationDate = LocalDate.now();
+    private LocalDateTime creationDate = LocalDateTime.now().atZone(ZoneId.of(AMERICA_SAO_PAULO)).toLocalDateTime();
 
     public Person() {
     }
@@ -68,14 +72,18 @@ public class Person {
     }
 
     public void setCep(String cep) {
-        this.cep = cep;
+        if(cep != null && cep.isEmpty()){
+            this.cep = null;
+        } else {
+            this.cep = cep;
+        }
     }
 
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo integration to https://viacep.com.br/ws/01001000/json/ to pick addresses by cep and attach it into person object response
     //todo impl swagger
 
     @Autowired
