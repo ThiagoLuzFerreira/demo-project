@@ -12,12 +12,16 @@ import com.thiago.demoproject.webclient.model.Address;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -37,11 +41,19 @@ public class PersonService {
         return peoplePage.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
     }
 
-    public Page<PersonDTO> findPeopleByEmail(String email, Pageable pageable) {
+    public Page<PersonAddressDTO> findPeopleByEmail(String email, Pageable pageable) {
 
         logger.info("Finding people by email");
         Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
-        return peopleByEmail.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
+
+        List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
+        for (Person p : peopleByEmail.getContent()){
+            ResponseEntity<Address> address = addressFeingClient.getAddress(p.getCep());
+            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf()));
+        }
+
+        List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
     }
 
     @Transactional

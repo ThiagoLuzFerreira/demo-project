@@ -1,5 +1,6 @@
 package com.thiago.demoproject.controller;
 
+import com.thiago.demoproject.dto.PersonAddressDTO;
 import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.service.PersonService;
 import com.thiago.demoproject.webclient.dto.AddressDTO;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo impl swagger
     //todo integration to https://viacep.com.br/ws/01001000/json/ to pick addresses by cep and attach it into person object response
+    //todo impl swagger
 
     @Autowired
     private PersonService service;
@@ -32,7 +34,7 @@ public class PersonController {
     }
 
     @GetMapping(value = "/findByEmail")
-    ResponseEntity<Page<PersonDTO>> findByEmail(
+    ResponseEntity<Page<PersonAddressDTO>> findByEmail(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "email") String email){
