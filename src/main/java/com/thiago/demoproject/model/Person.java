@@ -17,7 +17,6 @@ public class Person {
     @Column(unique = true)
     private String email;
     private String gender;
-    private String address;
     private String cep;
     private LocalDate creationDate = LocalDate.now();
 
@@ -64,14 +63,6 @@ public class Person {
         this.gender = gender;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getCep() {
         return cep;
     }
@@ -93,11 +84,11 @@ public class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(email, person.email) && Objects.equals(gender, person.gender) && Objects.equals(address, person.address) && Objects.equals(cep, person.cep) && Objects.equals(creationDate, person.creationDate);
+        return Objects.equals(id, person.id) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(email, person.email) && Objects.equals(gender, person.gender) && Objects.equals(cep, person.cep) && Objects.equals(creationDate, person.creationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, gender, address, cep, creationDate);
+        return Objects.hash(id, firstName, lastName, email, gender, cep, creationDate);
     }
 }

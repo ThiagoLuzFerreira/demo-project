@@ -9,19 +9,17 @@ public class PersonDTO {
     private String lastName;
     private String email;
     private String gender;
-    private String address;
     private String cep;
 
     public PersonDTO() {
     }
 
-    public PersonDTO(UUID id, String firstName, String lastName, String email, String gender, String address, String cep) {
+    public PersonDTO(UUID id, String firstName, String lastName, String email, String gender, String cep) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.gender = gender;
-        this.address = address;
         this.cep = cep;
     }
 
@@ -63,14 +61,6 @@ public class PersonDTO {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
     public String getCep() {

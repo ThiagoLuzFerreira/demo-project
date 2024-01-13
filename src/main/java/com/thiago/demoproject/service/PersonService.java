@@ -46,10 +46,15 @@ public class PersonService {
         logger.info("Finding people by email");
         Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
 
+//        List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
+//        for (Person p : peopleByEmail.getContent()){
+//            ResponseEntity<Address> address = addressFeingClient.getAddress(p.getCep());
+//            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf()));
+//        }
         List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
         for (Person p : peopleByEmail.getContent()){
             ResponseEntity<Address> address = addressFeingClient.getAddress(p.getCep());
-            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf()));
+            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), new AddressDTO(address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf())));
         }
 
         List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
