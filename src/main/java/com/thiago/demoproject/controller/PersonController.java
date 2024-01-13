@@ -2,6 +2,7 @@ package com.thiago.demoproject.controller;
 
 import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.service.PersonService;
+import com.thiago.demoproject.webclient.dto.AddressDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,9 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/v1")
 public class PersonController {
+
+    //todo impl swagger
+    //todo integration to https://viacep.com.br/ws/01001000/json/ to pick addresses by cep and attach it into person object response
 
     @Autowired
     private PersonService service;
@@ -42,5 +46,10 @@ public class PersonController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(person.getId()).toUri();
         return ResponseEntity.created(location).body(service.save(person));
+    }
+
+    @GetMapping("/{cep}")
+    public ResponseEntity<AddressDTO> getAddress(@PathVariable String cep){
+        return ResponseEntity.ok(service.getAddress(cep));
     }
 }

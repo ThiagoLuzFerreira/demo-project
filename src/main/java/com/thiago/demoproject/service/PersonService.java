@@ -1,14 +1,19 @@
 package com.thiago.demoproject.service;
 
+import com.thiago.demoproject.dto.PersonAddressDTO;
 import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.exception.DataIntegrityViolationException;
 import com.thiago.demoproject.mapper.GenericModelMapper;
 import com.thiago.demoproject.model.Person;
 import com.thiago.demoproject.repository.PersonRepository;
+import com.thiago.demoproject.webclient.AddressFeingClient;
+import com.thiago.demoproject.webclient.dto.AddressDTO;
+import com.thiago.demoproject.webclient.model.Address;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +26,9 @@ public class PersonService {
 
     @Autowired
     private PersonRepository repository;
+
+    @Autowired
+    private AddressFeingClient addressFeingClient;
 
     public Page<PersonDTO> findAll(Pageable pageable){
 
@@ -46,5 +54,10 @@ public class PersonService {
         }
         Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
         return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
+    }
+
+    public AddressDTO getAddress(String cep){
+        Address address = addressFeingClient.getAddress(cep).getBody();
+        return GenericModelMapper.parseObject(address, AddressDTO.class);
     }
 }
