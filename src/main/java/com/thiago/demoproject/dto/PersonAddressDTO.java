@@ -1,9 +1,11 @@
 package com.thiago.demoproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.thiago.demoproject.webclient.dto.AddressDTO;
 
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PersonAddressDTO {
 
     private UUID id;
@@ -12,6 +14,7 @@ public class PersonAddressDTO {
     private String email;
     private String gender;
     private AddressDTO address;
+    private String message;
 
     public PersonAddressDTO() {
     }
@@ -23,6 +26,15 @@ public class PersonAddressDTO {
         this.email = email;
         this.gender = gender;
         this.address = address;
+    }
+
+    public PersonAddressDTO(UUID id, String firstName, String lastName, String email, String gender, String message) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.gender = gender;
+        this.message = message;
     }
 
     public UUID getId() {
@@ -71,5 +83,13 @@ public class PersonAddressDTO {
 
     public void setAddress(AddressDTO address) {
         this.address = address;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

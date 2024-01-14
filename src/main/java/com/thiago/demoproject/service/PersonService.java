@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -39,6 +40,7 @@ public class PersonService {
         logger.info("Finding all people");
         Page<Person> peoplePage = repository.findAll(pageable);
         return peoplePage.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
+        //todo impl sort asc and desc
     }
 
     public Page<PersonAddressDTO> findPeopleByEmail(String email, Pageable pageable) {
@@ -48,9 +50,12 @@ public class PersonService {
         List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
         for (Person p : peopleByEmail.getContent()){
             ResponseEntity<Address> address = addressFeingClient.getAddress(p.getCep());
-            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), new AddressDTO(address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf())));
+            if(Objects.requireNonNull(address.getBody()).getCep() == null){
+                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), "No address for current CEP"));
+            } else {
+                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), new AddressDTO(address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf())));
+            }
         }
-
         List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
     }
@@ -71,6 +76,9 @@ public class PersonService {
 
     public AddressDTO getAddress(String cep){
         Address address = addressFeingClient.getAddress(cep).getBody();
+        if(address.getCep() == null){
+            throw new IllegalArgumentException("No address for current CEP");
+        }
         return GenericModelMapper.parseObject(address, AddressDTO.class);
     }
 }
