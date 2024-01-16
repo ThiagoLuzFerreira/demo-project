@@ -3,7 +3,11 @@ package com.thiago.demoproject.controller;
 import com.thiago.demoproject.dto.PersonAddressDTO;
 import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.service.PersonService;
-import com.thiago.demoproject.webclient.dto.AddressDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,12 +24,26 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo impl swagger
     //todo impl flyway
+    //todo impl broker(rabbitMQ) to send email when user is created. message must be sent from this micro service. create another ms to send the e-mail
 
     @Autowired
     private PersonService service;
 
+    @Operation(summary = "Find people",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = PersonDTO.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Page<PersonDTO>> listAll(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
@@ -38,6 +56,20 @@ public class PersonController {
         return ResponseEntity.ok().body(service.findAll(pageable));
     }
 
+    @Operation(summary = "Find people by email",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = PersonAddressDTO.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content)
+            }
+    )
     @GetMapping(value = "/findByEmail", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Page<PersonAddressDTO>> findByEmail(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
@@ -48,15 +80,20 @@ public class PersonController {
         return ResponseEntity.ok().body(service.findPeopleByEmail(email, pageable));
     }
 
+    @Operation(summary = "Adds a new person",
+            responses = {
+                    @ApiResponse(description = "Created", responseCode = "201",
+                            content = @Content(schema = @Schema(implementation = PersonDTO.class))
+                    ),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content),
+            }
+    )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PersonDTO> create(@RequestBody PersonDTO person){
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(person.getId()).toUri();
         return ResponseEntity.created(location).body(service.save(person));
-    }
-
-    @GetMapping("/{cep}")
-    public ResponseEntity<AddressDTO> getAddress(@PathVariable String cep){
-        return ResponseEntity.ok(service.getAddress(cep));
     }
 }

@@ -40,7 +40,6 @@ public class PersonService {
         logger.info("Finding all people");
         Page<Person> peoplePage = repository.findAll(pageable);
         return peoplePage.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
-        //todo impl sort asc and desc
     }
 
     public Page<PersonAddressDTO> findPeopleByEmail(String email, Pageable pageable) {
@@ -72,13 +71,5 @@ public class PersonService {
         }
         Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
         return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
-    }
-
-    public AddressDTO getAddress(String cep){
-        Address address = addressFeingClient.getAddress(cep).getBody();
-        if(address.getCep() == null){
-            throw new IllegalArgumentException("No address for current CEP");
-        }
-        return GenericModelMapper.parseObject(address, AddressDTO.class);
     }
 }
