@@ -93,7 +93,7 @@ public class PersonController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PersonDTO> create(@RequestBody PersonDTO person){
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(person.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/findByEmail").queryParam("email", person.getEmail()).buildAndExpand().toUri();
         return ResponseEntity.created(location).body(service.save(person));
     }
 }
