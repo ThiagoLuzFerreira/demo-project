@@ -24,8 +24,8 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo impl flyway
     //todo impl broker(rabbitMQ) to send email when user is created. message must be sent from this micro service. create another ms to send the e-mail
+    //todo impl validation on PersonDTO
 
     @Autowired
     private PersonService service;

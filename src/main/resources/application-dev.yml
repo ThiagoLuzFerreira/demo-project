@@ -19,3 +19,8 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
