@@ -5,6 +5,7 @@ import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.exception.DataIntegrityViolationException;
 import com.thiago.demoproject.mapper.GenericModelMapper;
 import com.thiago.demoproject.model.Person;
+import com.thiago.demoproject.producer.PersonProducer;
 import com.thiago.demoproject.repository.PersonRepository;
 import com.thiago.demoproject.webclient.AddressFeingClient;
 import com.thiago.demoproject.webclient.dto.AddressDTO;
@@ -34,6 +35,9 @@ public class PersonService {
 
     @Autowired
     private AddressFeingClient addressFeingClient;
+
+    @Autowired
+    private PersonProducer personProducer;
 
     public Page<PersonDTO> findAll(Pageable pageable){
 
@@ -70,6 +74,7 @@ public class PersonService {
             throw new DataIntegrityViolationException("CEP cannot be empty");
         }
         Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
+        personProducer.publishEmailMessage(savedPerson);
         return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
     }
 }
