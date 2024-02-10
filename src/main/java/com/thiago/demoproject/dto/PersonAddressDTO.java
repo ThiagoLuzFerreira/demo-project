@@ -14,6 +14,8 @@ public class PersonAddressDTO {
     private String email;
     private String gender;
     private AddressDTO address;
+
+    private String  cep;
     private String message;
 
     public PersonAddressDTO() {
@@ -28,12 +30,13 @@ public class PersonAddressDTO {
         this.address = address;
     }
 
-    public PersonAddressDTO(UUID id, String firstName, String lastName, String email, String gender, String message) {
+    public PersonAddressDTO(UUID id, String firstName, String lastName, String email, String gender, String cep, String message) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.gender = gender;
+        this.cep = cep;
         this.message = message;
     }
 
@@ -83,6 +86,14 @@ public class PersonAddressDTO {
 
     public void setAddress(AddressDTO address) {
         this.address = address;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 
     public String getMessage() {

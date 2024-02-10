@@ -26,7 +26,9 @@ public class PersonController {
 
     //todo impl validation on PersonDTO
     //todo impl patch for cep
+    //todo circuit breaker impl
     //todo impl security, jwt token, oauth2, refresh token on redis
+    //todo dockerize everything into a single docker compose and create a project with modules
 
     @Autowired
     private PersonService service;
@@ -96,5 +98,25 @@ public class PersonController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/findByEmail").queryParam("email", person.getEmail()).buildAndExpand().toUri();
         return ResponseEntity.created(location).body(service.save(person));
+    }
+
+    @Operation(summary = "Updates a person cep", description = "Updates a person cep",
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = @Content(schema = @Schema(implementation = PersonDTO.class))
+                    ),
+                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content),
+            }
+    )
+    @PatchMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<PersonDTO> updateCep(@RequestParam String email,
+                                        @RequestParam String cep){
+
+        var person = service.updateCep(email, cep);
+        return ResponseEntity.ok(person);
     }
 }

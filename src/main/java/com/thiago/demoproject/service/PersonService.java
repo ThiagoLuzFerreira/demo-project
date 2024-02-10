@@ -3,6 +3,7 @@ package com.thiago.demoproject.service;
 import com.thiago.demoproject.dto.PersonAddressDTO;
 import com.thiago.demoproject.dto.PersonDTO;
 import com.thiago.demoproject.exception.DataIntegrityViolationException;
+import com.thiago.demoproject.exception.ResourceNotFoundException;
 import com.thiago.demoproject.mapper.GenericModelMapper;
 import com.thiago.demoproject.model.Person;
 import com.thiago.demoproject.producer.PersonProducer;
@@ -54,7 +55,7 @@ public class PersonService {
         for (Person p : peopleByEmail.getContent()){
             ResponseEntity<Address> address = addressFeingClient.getAddress(p.getCep());
             if(Objects.requireNonNull(address.getBody()).getCep() == null){
-                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), "No address for current CEP"));
+                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), p.getCep(), "No address for current CEP"));
             } else {
                 personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), new AddressDTO(address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf())));
             }
@@ -76,5 +77,18 @@ public class PersonService {
         Person savedPerson = repository.save(GenericModelMapper.parseObject(person, Person.class));
         personProducer.publishEmailMessage(savedPerson);
         return GenericModelMapper.parseObject(savedPerson, PersonDTO.class);
+    }
+
+    @Transactional
+    public PersonDTO updateCep(String email, String cep) {
+
+        logger.info("Updating " + email + " CEP");
+
+        Person person = repository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Resource not found for " + email));
+        if(person != null){
+            person.setCep(cep);
+            return GenericModelMapper.parseObject(repository.save(person), PersonDTO.class);
+        }
+        return null;
     }
 }
