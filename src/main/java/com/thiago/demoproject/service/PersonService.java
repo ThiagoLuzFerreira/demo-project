@@ -71,6 +71,8 @@ public class PersonService {
         Optional<Person> foundPerson = repository.findByEmail(person.getEmail());
         if(foundPerson.isPresent() && foundPerson.get().getEmail().equals(person.getEmail())){
             throw new DataIntegrityViolationException("Already registred email");
+        } else if (person.getEmail().isEmpty()) {
+            throw new DataIntegrityViolationException("Email cannot be empty");
         } else if (person.getCep().isEmpty()) {
             throw new DataIntegrityViolationException("CEP cannot be empty");
         }

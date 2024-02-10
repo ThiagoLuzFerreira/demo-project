@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,8 +25,6 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo impl validation on PersonDTO
-    //todo impl patch for cep
     //todo circuit breaker impl
     //todo impl security, jwt token, oauth2, refresh token on redis
     //todo dockerize everything into a single docker compose and create a project with modules
@@ -94,7 +93,7 @@ public class PersonController {
             }
     )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PersonDTO> create(@RequestBody PersonDTO person){
+    ResponseEntity<PersonDTO> create(@RequestBody @Valid PersonDTO person){
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/findByEmail").queryParam("email", person.getEmail()).buildAndExpand().toUri();
         return ResponseEntity.created(location).body(service.save(person));
