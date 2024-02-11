@@ -74,7 +74,6 @@ public class PersonController {
             }
     )
     @GetMapping(value = "/findByEmail", produces = MediaType.APPLICATION_JSON_VALUE)
-    @CircuitBreaker(name = "findByEmailCB", fallbackMethod = "fallbackFindByEmail")
     ResponseEntity<Page<PersonAddressDTO>> findByEmail(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
@@ -82,16 +81,6 @@ public class PersonController {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return ResponseEntity.ok().body(service.findPeopleByEmail(email, pageable));
-    }
-
-    ResponseEntity<Page<PersonAddressDTO>> fallbackFindByEmail(
-            Integer pageNumber,
-            Integer pageSize,
-            String email,
-            Throwable throwable){
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return ResponseEntity.ok().body(service.fallbackFindPeopleByEmail(email, pageable));
     }
 
     @Operation(summary = "Adds a new person",

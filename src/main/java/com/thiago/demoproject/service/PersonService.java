@@ -11,6 +11,7 @@ import com.thiago.demoproject.repository.PersonRepository;
 import com.thiago.demoproject.webclient.AddressFeingClient;
 import com.thiago.demoproject.webclient.dto.AddressDTO;
 import com.thiago.demoproject.webclient.model.Address;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,7 @@ public class PersonService {
         return peoplePage.map(p -> GenericModelMapper.parseObject(p, PersonDTO.class));
     }
 
+    @CircuitBreaker(name = "findByEmailCB", fallbackMethod = "fallbackfindPeopleByEmail")
     public Page<PersonAddressDTO> findPeopleByEmail(String email, Pageable pageable) {
 
         logger.info("Finding people by email");
@@ -59,6 +61,17 @@ public class PersonService {
             } else {
                 personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), new AddressDTO(address.getBody().getCep(), address.getBody().getLogradouro(), address.getBody().getComplemento(), address.getBody().getBairro(), address.getBody().getLocalidade(), address.getBody().getUf())));
             }
+        }
+        List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
+    }
+
+    private Page<PersonAddressDTO> fallbackfindPeopleByEmail(String email, Pageable pageable, Throwable throwable) {
+
+        Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
+        List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
+        for (Person p : peopleByEmail.getContent()) {
+            personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), p.getCep(), "Via CEP API is currently unavailable."));
         }
         List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
@@ -92,16 +105,5 @@ public class PersonService {
             return GenericModelMapper.parseObject(repository.save(person), PersonDTO.class);
         }
         return null;
-    }
-
-    public Page<PersonAddressDTO> fallbackFindPeopleByEmail(String email, Pageable pageable) {
-
-        Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
-        List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
-        for (Person p : peopleByEmail.getContent()) {
-                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), p.getCep(), "Via CEP API is currently unavailable."));
-        }
-        List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
-        return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
     }
 }
