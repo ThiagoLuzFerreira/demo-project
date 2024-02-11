@@ -93,4 +93,15 @@ public class PersonService {
         }
         return null;
     }
+
+    public Page<PersonAddressDTO> fallbackFindPeopleByEmail(String email, Pageable pageable) {
+
+        Page<Person> peopleByEmail = repository.findPeopleByEmail(email, pageable);
+        List<PersonAddressDTO> personAddressDTOList = new ArrayList<>();
+        for (Person p : peopleByEmail.getContent()) {
+                personAddressDTOList.add(new PersonAddressDTO(p.getId(), p.getFirstName(), p.getLastName(), p.getEmail(), p.getGender(), p.getCep(), "Via CEP API is currently unavailable."));
+        }
+        List<PersonAddressDTO> mappedList = personAddressDTOList.stream().map(p -> GenericModelMapper.parseObject(p, PersonAddressDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(mappedList, peopleByEmail.getPageable(), peopleByEmail.getTotalElements());
+    }
 }
