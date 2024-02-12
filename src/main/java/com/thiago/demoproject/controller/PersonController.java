@@ -1,9 +1,8 @@
 package com.thiago.demoproject.controller;
 
-import com.thiago.demoproject.dto.PersonAddressDTO;
-import com.thiago.demoproject.dto.PersonDTO;
+import com.thiago.demoproject.model.dto.PersonAddressDTO;
+import com.thiago.demoproject.model.dto.PersonDTO;
 import com.thiago.demoproject.service.PersonService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,7 +25,6 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo circuit breaker impl
     //todo impl security, jwt token, oauth2, refresh token on redis
     //todo dockerize everything into a single docker compose and create a project with modules
 

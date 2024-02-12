@@ -13,6 +13,14 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     networks:
       - demo-project-network
+  rabbit-mq:
+    image: 3.9-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - demo-project-network
 
 networks:
   demo-project-network:
