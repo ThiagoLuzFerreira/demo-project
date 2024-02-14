@@ -25,9 +25,9 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo move queue creation from email ms to this
     //todo impl security, jwt token, oauth2, refresh token on redis
-    //todo dockerize everything into a single docker compose and create a project with modules
+    //todo set a homologation profile to dockerize it all
+    //todo dockerize everything into a single docker compose and create a project with modules. remove config server and pass enviroment variables to SMTP via docker compose file
 
     @Autowired
     private PersonService service;

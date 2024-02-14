@@ -1,7 +1,7 @@
 package com.thiago.demoproject.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.thiago.demoproject.webclient.dto.AddressDTO;
+import com.thiago.demoproject.webclient.model.dto.AddressDTO;
 
 import java.util.UUID;
 

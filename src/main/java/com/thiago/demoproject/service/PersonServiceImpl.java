@@ -9,7 +9,7 @@ import com.thiago.demoproject.model.dto.PersonDTO;
 import com.thiago.demoproject.producer.PersonProducer;
 import com.thiago.demoproject.repository.PersonRepository;
 import com.thiago.demoproject.webclient.AddressFeingClient;
-import com.thiago.demoproject.webclient.dto.AddressDTO;
+import com.thiago.demoproject.webclient.model.dto.AddressDTO;
 import com.thiago.demoproject.webclient.model.Address;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;

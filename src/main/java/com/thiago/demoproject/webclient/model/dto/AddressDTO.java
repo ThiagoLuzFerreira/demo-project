@@ -1,4 +1,4 @@
-package com.thiago.demoproject.webclient.dto;
+package com.thiago.demoproject.webclient.model.dto;
 
 public class AddressDTO {
 
