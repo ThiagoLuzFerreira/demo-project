@@ -25,11 +25,6 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-        //todo send image to dockerhub
-        //todo build Dockerfile of demo-project
-        //todo do the same thing to demo-project-email
-        //todo test all flow running in containers
-
     @Autowired
     private PersonService service;
 
