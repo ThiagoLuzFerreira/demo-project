@@ -25,9 +25,10 @@ import java.net.URI;
 @RequestMapping("/api/v1")
 public class PersonController {
 
-    //todo impl security, jwt token, oauth2, refresh token on redis
-    //todo set a homologation profile to dockerize it all
-    //todo dockerize everything into a single docker compose and create a project with modules. remove config server and pass enviroment variables to SMTP via docker compose file
+        //todo send image to dockerhub
+        //todo build Dockerfile of demo-project
+        //todo do the same thing to demo-project-email
+        //todo test all flow running in containers
 
     @Autowired
     private PersonService service;

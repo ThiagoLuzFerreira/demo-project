@@ -24,14 +24,6 @@ spring:
     port: 5672
     username: guest
     password: guest
-  cloud:
-    config:
-      server:
-        git:
-          default-label: main
-          uri: https://github.com/ThiagoLuzFerreira/configs
-          username: ${GITHUB_USER}
-          password: ${GITHUB_PASS}
 
 mq:
   queues:
