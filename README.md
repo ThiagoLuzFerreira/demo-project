@@ -11,3 +11,9 @@ for postgres and rabbitMQ:
 - install docker
 - go to project root folder
 - on terminal run: docker compose -f stack.yml up
+
+if you want to run the api and de stacks:
+
+- go to application.yml and change spring.profiles.active to hom
+- go to project root folder
+- on terminal run: docker compose up
