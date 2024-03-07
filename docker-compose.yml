@@ -1,0 +1,46 @@
+version: "3.3"
+
+services:
+  local-postgres-compose:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "example"
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - demo-project-network
+  rabbit-mq:
+    image: rabbitmq:3.9-management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - 5672
+      - 15672
+    networks:
+      - demo-project-network
+  demo-project:
+    build:
+      dockerfile: Dockerfile
+    container_name: demo-project
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    networks:
+      - demo-project-network
+    depends_on:
+      - local-postgres-compose
+      - rabbit-mq
+
+networks:
+  demo-project-network:
+    driver: bridge

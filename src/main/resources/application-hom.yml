@@ -7,7 +7,7 @@ spring:
       pool-name: plataforma-database-pool
       auto-commit: false
       connection-timeout: 30000
-    url: "jdbc:postgresql://local-postgres-compose:5432/demo_project_database"
+    url: "jdbc:postgresql://host.docker.internal:5432/demo_project_database"
     username: "postgres"
     password: "example"
     type: com.zaxxer.hikari.HikariDataSource
